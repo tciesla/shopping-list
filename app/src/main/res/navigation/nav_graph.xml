@@ -13,16 +13,16 @@
 
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            app:destination="@id/ShoppingListItemAddFragment" />
     </fragment>
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="org.example.tciesla.shoppinglist.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
+        android:id="@+id/ShoppingListItemAddFragment"
+        android:name="org.example.tciesla.shoppinglist.ShoppingListItemAddFragment"
+        android:label="@string/shopping_list_item_add_fragment_label"
+        tools:layout="@layout/fragment_shopping_list_item_add">
 
         <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
+            android:id="@+id/action_ShoppingListItemAddFragment_to_ShoppingListFragment"
             app:destination="@id/ShoppingListFragment" />
     </fragment>
 </navigation>
