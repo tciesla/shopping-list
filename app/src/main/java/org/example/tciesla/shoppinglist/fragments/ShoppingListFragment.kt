@@ -1,4 +1,4 @@
-package org.example.tciesla.shoppinglist
+package org.example.tciesla.shoppinglist.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import org.example.tciesla.shoppinglist.R
+import org.example.tciesla.shoppinglist.ShoppingListItem
+import org.example.tciesla.shoppinglist.ShoppingListItemRecycleAdapter
 import org.example.tciesla.shoppinglist.databinding.FragmentShoppingListBinding
 
 var shoppingList = listOf(

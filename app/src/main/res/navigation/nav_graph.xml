@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/ShoppingListFragment"
-        android:name="org.example.tciesla.shoppinglist.ShoppingListFragment"
+        android:name="org.example.tciesla.shoppinglist.fragments.ShoppingListFragment"
         android:label="@string/shopping_list_fragment_label"
         tools:layout="@layout/fragment_shopping_list">
 
@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/ShoppingListItemAddFragment"
-        android:name="org.example.tciesla.shoppinglist.ShoppingListItemAddFragment"
+        android:name="org.example.tciesla.shoppinglist.fragments.ShoppingListItemAddFragment"
         android:label="@string/shopping_list_item_add_fragment_label"
         tools:layout="@layout/fragment_shopping_list_item_add">
 

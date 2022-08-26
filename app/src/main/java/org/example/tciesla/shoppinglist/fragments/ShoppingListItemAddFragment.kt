@@ -1,4 +1,4 @@
-package org.example.tciesla.shoppinglist
+package org.example.tciesla.shoppinglist.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import android.widget.EditText
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import org.example.tciesla.shoppinglist.R
 import org.example.tciesla.shoppinglist.databinding.FragmentShoppingListItemAddBinding
 
 const val NEW_SHOPPING_LIST_ITEM_TITLE = "newShoppingListItemTitle"
