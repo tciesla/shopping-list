@@ -1,5 +1,6 @@
 package org.example.tciesla.shoppinglist
 
+import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,21 +9,50 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-data class ShoppingListItem(val title: String)
+data class ShoppingListItem(val title: String, var bought: Boolean = false) {
 
-class ShoppingListItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    fun bind(shoppingListItem: ShoppingListItem) {
-        itemView.findViewById<TextView>(R.id.item_title).text = shoppingListItem.title
+    fun bought() {
+        bought = !bought
     }
 }
 
-class ShoppingListItemRecycleAdapter :
-    ListAdapter<ShoppingListItem, ShoppingListItemViewHolder>(ShoppingListItemDiffCallback()) {
+class ShoppingListItemViewHolder(
+    itemView: View,
+    private val shoppingListItemCallbacks: ShoppingListItemCallbacks
+) : RecyclerView.ViewHolder(itemView) {
+    fun bind(shoppingListItem: ShoppingListItem) {
+        val itemTitleView = itemView.findViewById<TextView>(R.id.item_title)
+
+        itemTitleView.text = shoppingListItem.title
+        setPaintFlags(itemTitleView, shoppingListItem.bought)
+
+        itemView.setOnClickListener {
+            shoppingListItemCallbacks.onShoppingListItemBought(shoppingListItem)
+            setPaintFlags(itemTitleView, shoppingListItem.bought)
+        }
+        itemView.setOnLongClickListener {
+            shoppingListItemCallbacks.onShoppingListItemRemoved(shoppingListItem)
+            return@setOnLongClickListener true
+        }
+    }
+
+    private fun setPaintFlags(itemTitleView: TextView, bought: Boolean) {
+        if (bought) {
+            itemTitleView.paintFlags = itemTitleView.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+        } else {
+            itemTitleView.paintFlags = itemTitleView.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+        }
+    }
+}
+
+class ShoppingListItemRecycleAdapter(
+    private val shoppingListItemCallbacks: ShoppingListItemCallbacks
+    ) : ListAdapter<ShoppingListItem, ShoppingListItemViewHolder>(ShoppingListItemDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShoppingListItemViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val itemView = inflater.inflate(R.layout.shopping_list_item_row, parent, false)
-        return ShoppingListItemViewHolder(itemView)
+        return ShoppingListItemViewHolder(itemView, shoppingListItemCallbacks)
     }
 
     override fun onBindViewHolder(holder: ShoppingListItemViewHolder, position: Int) {

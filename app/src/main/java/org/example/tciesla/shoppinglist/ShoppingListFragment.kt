@@ -15,10 +15,11 @@ var shoppingList = listOf(
     ShoppingListItem("item 3"),
 )
 
-class ShoppingListFragment : Fragment() {
+class ShoppingListFragment : Fragment(), ShoppingListItemCallbacks {
+
+    private lateinit var shoppingListAdapter: ShoppingListItemRecycleAdapter
 
     private var _binding: FragmentShoppingListBinding? = null
-
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -27,15 +28,14 @@ class ShoppingListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentShoppingListBinding.inflate(inflater, container, false)
-        handleNewShoppingListItemIfExists()
+        handleShoppingListItemAddedIfOccurred()
         return binding.root
     }
 
-    private fun handleNewShoppingListItemIfExists() {
-        val newShoppingListItemTitle = arguments?.getString(NEW_SHOPPING_LIST_ITEM_TITLE)
-        if (newShoppingListItemTitle != null) {
-            val newShoppingListItem = ShoppingListItem(newShoppingListItemTitle)
-            shoppingList = shoppingList.union(listOf(newShoppingListItem)).toList()
+    private fun handleShoppingListItemAddedIfOccurred() {
+        val shoppingListItemTitle = arguments?.getString(NEW_SHOPPING_LIST_ITEM_TITLE)
+        if (shoppingListItemTitle != null) {
+            onShoppingListItemAdded(ShoppingListItem(shoppingListItemTitle))
         }
     }
 
@@ -54,13 +54,48 @@ class ShoppingListFragment : Fragment() {
     }
 
     private fun setUpShoppingListItemRecycleAdapter() {
-        val shoppingListItemRecycleAdapter = ShoppingListItemRecycleAdapter()
+        shoppingListAdapter = ShoppingListItemRecycleAdapter(this)
 
         binding.shoppingList.apply {
             layoutManager = LinearLayoutManager(this.context)
-            adapter = shoppingListItemRecycleAdapter
+            adapter = shoppingListAdapter
         }
 
-        shoppingListItemRecycleAdapter.submitList(shoppingList)
+        shoppingListAdapter.submitList(shoppingList)
     }
+
+    override fun onShoppingListItemAdded(shoppingListItem: ShoppingListItem) {
+        shoppingList = insertBetweenBoughtAndUnBoughtItems(shoppingListItem)
+    }
+
+    override fun onShoppingListItemBought(shoppingListItem: ShoppingListItem) {
+        shoppingListItem.bought()
+
+        val listWithoutModifiedItem = shoppingList.filter { it != shoppingListItem }
+        shoppingList = if (shoppingListItem.bought) {
+            listWithoutModifiedItem.union(listOf(shoppingListItem)).toList()
+        } else {
+            insertBetweenBoughtAndUnBoughtItems(shoppingListItem)
+        }
+        shoppingListAdapter.submitList(shoppingList)
+    }
+
+    private fun insertBetweenBoughtAndUnBoughtItems(shoppingListItem: ShoppingListItem): List<ShoppingListItem> {
+        val unBoughtItems = shoppingList.filter { !it.bought }
+        val boughtItems = shoppingList.filter { it.bought }
+        return unBoughtItems
+            .union(listOf(shoppingListItem)).toList()
+            .union(boughtItems).toList()
+    }
+
+    override fun onShoppingListItemRemoved(shoppingListItem: ShoppingListItem) {
+        shoppingList = shoppingList.filter { it != shoppingListItem }
+        shoppingListAdapter.submitList(shoppingList)
+    }
+}
+
+interface ShoppingListItemCallbacks {
+    fun onShoppingListItemAdded(shoppingListItem: ShoppingListItem)
+    fun onShoppingListItemBought(shoppingListItem: ShoppingListItem)
+    fun onShoppingListItemRemoved(shoppingListItem: ShoppingListItem)
 }
