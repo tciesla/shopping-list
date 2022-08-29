@@ -8,18 +8,14 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.example.tciesla.shoppinglist.R
-import org.example.tciesla.shoppinglist.models.ShoppingListItem
 import org.example.tciesla.shoppinglist.ShoppingListItemRecycleAdapter
 import org.example.tciesla.shoppinglist.databinding.FragmentShoppingListBinding
-
-var shoppingList = listOf(
-    ShoppingListItem("item 1"),
-    ShoppingListItem("item 2"),
-    ShoppingListItem("item 3"),
-)
+import org.example.tciesla.shoppinglist.models.ShoppingListItem
+import org.example.tciesla.shoppinglist.repositories.ShoppingListItems
 
 class ShoppingListFragment : Fragment(), ShoppingListItemCallbacks {
 
+    private lateinit var shoppingListItems: ShoppingListItems
     private lateinit var shoppingListAdapter: ShoppingListItemRecycleAdapter
 
     private var _binding: FragmentShoppingListBinding? = null
@@ -30,6 +26,7 @@ class ShoppingListFragment : Fragment(), ShoppingListItemCallbacks {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        shoppingListItems = ShoppingListItems(requireContext())
         _binding = FragmentShoppingListBinding.inflate(inflater, container, false)
         handleShoppingListItemAddedIfOccurred()
         return binding.root
@@ -38,7 +35,7 @@ class ShoppingListFragment : Fragment(), ShoppingListItemCallbacks {
     private fun handleShoppingListItemAddedIfOccurred() {
         val shoppingListItemTitle = arguments?.getString(NEW_SHOPPING_LIST_ITEM_TITLE)
         if (shoppingListItemTitle != null) {
-            onShoppingListItemAdded(ShoppingListItem(shoppingListItemTitle))
+            onShoppingListItemAdded(ShoppingListItem(shoppingListItemTitle, bought = false))
         }
     }
 
@@ -64,36 +61,46 @@ class ShoppingListFragment : Fragment(), ShoppingListItemCallbacks {
             adapter = shoppingListAdapter
         }
 
-        shoppingListAdapter.submitList(shoppingList)
+        shoppingListAdapter.submitList(shoppingListItems.fetch())
     }
 
     override fun onShoppingListItemAdded(shoppingListItem: ShoppingListItem) {
-        shoppingList = insertBetweenBoughtAndUnBoughtItems(shoppingListItem)
+        val shoppingList = shoppingListItems.fetch()
+        val modifiedShoppingList = shoppingList.addNewItem(shoppingListItem)
+        shoppingListItems.persist(modifiedShoppingList)
     }
 
     override fun onShoppingListItemBought(shoppingListItem: ShoppingListItem) {
         shoppingListItem.bought()
 
-        val listWithoutModifiedItem = shoppingList.filter { it != shoppingListItem }
-        shoppingList = if (shoppingListItem.bought) {
-            listWithoutModifiedItem.union(listOf(shoppingListItem)).toList()
-        } else {
-            insertBetweenBoughtAndUnBoughtItems(shoppingListItem)
-        }
-        shoppingListAdapter.submitList(shoppingList)
-    }
-
-    private fun insertBetweenBoughtAndUnBoughtItems(shoppingListItem: ShoppingListItem): List<ShoppingListItem> {
-        val unBoughtItems = shoppingList.filter { !it.bought }
-        val boughtItems = shoppingList.filter { it.bought }
-        return unBoughtItems
-            .union(listOf(shoppingListItem)).toList()
-            .union(boughtItems).toList()
+        val shoppingList = shoppingListItems.fetch()
+        val modifiedShoppingList = shoppingList.addBoughtItem(shoppingListItem)
+        shoppingListAdapter.submitList(modifiedShoppingList)
+        shoppingListItems.persist(modifiedShoppingList)
     }
 
     override fun onShoppingListItemRemoved(shoppingListItem: ShoppingListItem) {
-        shoppingList = shoppingList.filter { it != shoppingListItem }
-        shoppingListAdapter.submitList(shoppingList)
+        val shoppingList = shoppingListItems.fetch()
+        val modifiedShoppingList = shoppingList.filter { it != shoppingListItem }
+        shoppingListAdapter.submitList(modifiedShoppingList)
+        shoppingListItems.persist(modifiedShoppingList)
+    }
+
+    private fun List<ShoppingListItem>.addNewItem(item: ShoppingListItem): List<ShoppingListItem> {
+        val unBoughtItems = this.filter { !it.bought }
+        val boughtItems = this.filter { it.bought }
+        return unBoughtItems
+            .union(listOf(item)).toList()
+            .union(boughtItems).toList()
+    }
+
+    private fun List<ShoppingListItem>.addBoughtItem(item: ShoppingListItem): List<ShoppingListItem> {
+        val listWithoutModifiedItem = this.filter { it != item }
+        return if (item.bought) {
+            listWithoutModifiedItem.union(listOf(item)).toList()
+        } else {
+            this.addNewItem(item)
+        }
     }
 }
 
