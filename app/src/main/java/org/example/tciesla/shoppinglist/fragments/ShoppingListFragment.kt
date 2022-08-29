@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.example.tciesla.shoppinglist.R
-import org.example.tciesla.shoppinglist.ShoppingListItem
+import org.example.tciesla.shoppinglist.models.ShoppingListItem
 import org.example.tciesla.shoppinglist.ShoppingListItemRecycleAdapter
 import org.example.tciesla.shoppinglist.databinding.FragmentShoppingListBinding
 

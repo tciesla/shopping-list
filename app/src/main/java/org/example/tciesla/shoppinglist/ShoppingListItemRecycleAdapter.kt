@@ -9,13 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.example.tciesla.shoppinglist.fragments.ShoppingListItemCallbacks
-
-data class ShoppingListItem(val title: String, var bought: Boolean = false) {
-
-    fun bought() {
-        bought = !bought
-    }
-}
+import org.example.tciesla.shoppinglist.models.ShoppingListItem
 
 class ShoppingListItemViewHolder(
     itemView: View,
