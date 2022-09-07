@@ -3,7 +3,11 @@ package org.example.tciesla.shoppinglist.models
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ShoppingListItem(val title: String, var bought: Boolean) {
+data class ShoppingListItem(
+    val title: String,
+    val list: String,
+    var bought: Boolean
+) {
 
     fun bought() {
         bought = !bought
@@ -14,11 +18,14 @@ data class ShoppingListItem(val title: String, var bought: Boolean) {
         if (javaClass != other?.javaClass) return false
         other as ShoppingListItem
         if (title != other.title) return false
+        if (list != other.list) return false
         return true
     }
 
     override fun hashCode(): Int {
-        return title.hashCode()
+        var result = title.hashCode()
+        result = 31 * result + list.hashCode()
+        return result
     }
 
 }

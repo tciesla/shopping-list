@@ -9,6 +9,9 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import org.example.tciesla.shoppinglist.databinding.ActivityMainBinding
+import org.example.tciesla.shoppinglist.state.ShoppingListState
+
+const val DEFAULT_SHOPPING_LIST_NAME = "default"
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,6 +20,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        ShoppingListState.initialize(applicationContext)
+
+        ShoppingListState.register(this) {
+            invalidateOptionsMenu()
+        }
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -28,20 +37,21 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
+    override fun onDestroy() {
+        super.onDestroy()
+        ShoppingListState.unregister(this)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        ShoppingListState.getShoppingListNames().forEach {
+            menu?.add(it)
+        }
+        return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
-        }
+        ShoppingListState.onShoppingListSelected(item.toString())
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -8,13 +8,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import org.example.tciesla.shoppinglist.fragments.ShoppingListItemCallbacks
 import org.example.tciesla.shoppinglist.models.ShoppingListItem
+import org.example.tciesla.shoppinglist.state.ShoppingListState
 
-class ShoppingListItemViewHolder(
-    itemView: View,
-    private val shoppingListItemCallbacks: ShoppingListItemCallbacks
-) : RecyclerView.ViewHolder(itemView) {
+class ShoppingListItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(shoppingListItem: ShoppingListItem) {
         val itemTitleView = itemView.findViewById<TextView>(R.id.item_title)
 
@@ -22,11 +19,11 @@ class ShoppingListItemViewHolder(
         setPaintFlags(itemTitleView, shoppingListItem.bought)
 
         itemView.setOnClickListener {
-            shoppingListItemCallbacks.onShoppingListItemBought(shoppingListItem)
+            ShoppingListState.onShoppingListItemBought(shoppingListItem)
             setPaintFlags(itemTitleView, shoppingListItem.bought)
         }
         itemView.setOnLongClickListener {
-            shoppingListItemCallbacks.onShoppingListItemRemoved(shoppingListItem)
+            ShoppingListState.onShoppingListItemRemoved(shoppingListItem)
             return@setOnLongClickListener true
         }
     }
@@ -40,14 +37,12 @@ class ShoppingListItemViewHolder(
     }
 }
 
-class ShoppingListItemRecycleAdapter(
-    private val shoppingListItemCallbacks: ShoppingListItemCallbacks
-    ) : ListAdapter<ShoppingListItem, ShoppingListItemViewHolder>(ShoppingListItemDiffCallback()) {
+class ShoppingListItemRecycleAdapter : ListAdapter<ShoppingListItem, ShoppingListItemViewHolder>(ShoppingListItemDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShoppingListItemViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val itemView = inflater.inflate(R.layout.shopping_list_item_row, parent, false)
-        return ShoppingListItemViewHolder(itemView, shoppingListItemCallbacks)
+        return ShoppingListItemViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: ShoppingListItemViewHolder, position: Int) {

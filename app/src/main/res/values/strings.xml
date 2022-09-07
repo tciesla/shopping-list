@@ -1,10 +1,9 @@
 <resources>
     <string name="app_name">shopping-list</string>
-    <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
     <string name="create">Create</string>
     <string name="cancel">Cancel</string>
     <string name="shopping_list_fragment_label">ShoppingList</string>
     <string name="shopping_list_item_add_fragment_label">Create item</string>
     <string name="shopping_list_item_title">Item title</string>
+    <string name="shopping_list_item_list">Item list</string>
 </resources>
