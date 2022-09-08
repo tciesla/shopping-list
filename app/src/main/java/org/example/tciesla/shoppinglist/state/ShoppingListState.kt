@@ -30,6 +30,8 @@ object ShoppingListState : Application() {
         return shoppingList.filter { it.list == selectedList }
     }
 
+    fun getSelectedShoppingListName(): String = selectedList
+
     fun getShoppingListNames(): List<String> {
         return shoppingList.map { it.list }.toSet().toList()
     }

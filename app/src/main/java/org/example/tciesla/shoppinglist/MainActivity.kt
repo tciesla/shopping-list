@@ -23,18 +23,19 @@ class MainActivity : AppCompatActivity() {
 
         ShoppingListState.initialize(applicationContext)
 
-        ShoppingListState.register(this) {
-            invalidateOptionsMenu()
-        }
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setSupportActionBar(binding.toolbar)
+
+        ShoppingListState.register(this) {
+            invalidateOptionsMenu()
+            updateActionBarTitle()
+        }
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
+        updateActionBarTitle()
     }
 
     override fun onDestroy() {
@@ -58,5 +59,10 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
+    }
+
+    private fun updateActionBarTitle() {
+        supportActionBar?.title =
+            "${getString(R.string.app_name)} > ${ShoppingListState.getSelectedShoppingListName()}"
     }
 }
