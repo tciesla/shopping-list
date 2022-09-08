@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">shopping-list</string>
+    <string name="app_name">ShoppingList</string>
     <string name="create">Create</string>
     <string name="cancel">Cancel</string>
     <string name="shopping_list_item_add_fragment_label">create item</string>
