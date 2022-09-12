@@ -1,21 +1,18 @@
 package org.example.tciesla.shoppinglist.fragments
 
 import android.os.Bundle
-import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import org.example.tciesla.shoppinglist.DEFAULT_SHOPPING_LIST_NAME
 import org.example.tciesla.shoppinglist.R
 import org.example.tciesla.shoppinglist.databinding.FragmentShoppingListItemAddBinding
-
-const val NEW_SHOPPING_LIST_ITEM_TITLE = "newShoppingListItemTitle"
-const val NEW_SHOPPING_LIST_ITEM_LIST = "newShoppingListItemList"
+import org.example.tciesla.shoppinglist.models.ShoppingListItem
+import org.example.tciesla.shoppinglist.state.DEFAULT_SHOPPING_LIST_NAME
+import org.example.tciesla.shoppinglist.state.ShoppingListState
 
 class ShoppingListItemAddFragment : Fragment() {
 
@@ -24,7 +21,8 @@ class ShoppingListItemAddFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentShoppingListItemAddBinding.inflate(inflater, container, false)
@@ -35,15 +33,12 @@ class ShoppingListItemAddFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.buttonAdd.setOnClickListener {
-            val bundle = bundleOf(
-                NEW_SHOPPING_LIST_ITEM_TITLE to view.findViewById<EditText>(R.id.item_title).text.toString(),
-                NEW_SHOPPING_LIST_ITEM_LIST to view.findViewById<EditText>(R.id.item_list).text.toStringOrDefault()
-            )
-            findNavController().navigate(R.id.action_ShoppingListItemAddFragment_to_ShoppingListFragment, bundle)
+            ShoppingListState.onShoppingListItemAdded(newShoppingListItem(view))
+            navigateToShoppingListFragment()
         }
 
         binding.buttonCancel.setOnClickListener {
-            findNavController().navigate(R.id.action_ShoppingListItemAddFragment_to_ShoppingListFragment)
+            navigateToShoppingListFragment()
         }
     }
 
@@ -61,10 +56,20 @@ class ShoppingListItemAddFragment : Fragment() {
         super.onStop()
         (requireActivity() as AppCompatActivity).supportActionBar?.show()
     }
-}
 
-private fun Editable.toStringOrDefault(): String {
-    return this.toString().ifBlank {
-        DEFAULT_SHOPPING_LIST_NAME
+    private fun navigateToShoppingListFragment() {
+        findNavController().navigate(R.id.action_ShoppingListItemAddFragment_to_ShoppingListFragment)
+    }
+
+    private fun newShoppingListItem(view: View): ShoppingListItem {
+        return ShoppingListItem(
+            title = view.findEditTextString(R.id.item_title, "item"),
+            list = view.findEditTextString(R.id.item_list, DEFAULT_SHOPPING_LIST_NAME),
+            bought = false
+        )
+    }
+
+    private fun View.findEditTextString(viewId: Int, default: String): String {
+        return this.findViewById<EditText>(viewId).text.toString().trim().ifBlank { default }
     }
 }

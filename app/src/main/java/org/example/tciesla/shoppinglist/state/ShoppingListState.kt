@@ -2,9 +2,10 @@ package org.example.tciesla.shoppinglist.state
 
 import android.app.Application
 import android.content.Context
-import org.example.tciesla.shoppinglist.DEFAULT_SHOPPING_LIST_NAME
 import org.example.tciesla.shoppinglist.models.ShoppingListItem
 import org.example.tciesla.shoppinglist.repositories.ShoppingListItems
+
+const val DEFAULT_SHOPPING_LIST_NAME = "default"
 
 object ShoppingListState : Application() {
     private val listeners: MutableMap<Any, () -> Unit> = hashMapOf()

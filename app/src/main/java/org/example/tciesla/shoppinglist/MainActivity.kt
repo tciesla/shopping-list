@@ -11,8 +11,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import org.example.tciesla.shoppinglist.databinding.ActivityMainBinding
 import org.example.tciesla.shoppinglist.state.ShoppingListState
 
-const val DEFAULT_SHOPPING_LIST_NAME = "default"
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration

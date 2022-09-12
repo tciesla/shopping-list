@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import org.example.tciesla.shoppinglist.R
 import org.example.tciesla.shoppinglist.ShoppingListItemRecycleAdapter
 import org.example.tciesla.shoppinglist.databinding.FragmentShoppingListBinding
-import org.example.tciesla.shoppinglist.models.ShoppingListItem
 import org.example.tciesla.shoppinglist.state.ShoppingListState
 
 class ShoppingListFragment : Fragment() {
@@ -26,18 +25,7 @@ class ShoppingListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentShoppingListBinding.inflate(inflater, container, false)
-        handleShoppingListItemAddedIfOccurred()
         return binding.root
-    }
-
-    private fun handleShoppingListItemAddedIfOccurred() {
-        val shoppingListItemTitle = arguments?.getString(NEW_SHOPPING_LIST_ITEM_TITLE)
-        val shoppingListItemList = arguments?.getString(NEW_SHOPPING_LIST_ITEM_LIST)
-        if (shoppingListItemTitle != null && shoppingListItemList != null) {
-            ShoppingListState.onShoppingListItemAdded(
-                ShoppingListItem(shoppingListItemTitle, shoppingListItemList, bought = false)
-            )
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
