@@ -14,8 +14,6 @@ import org.example.tciesla.shoppinglist.state.ShoppingListState
 
 class ShoppingListFragment : Fragment() {
 
-    private lateinit var shoppingListAdapter: ShoppingListItemRecycleAdapter
-
     private var _binding: FragmentShoppingListBinding? = null
     private val binding get() = _binding!!
 
@@ -44,10 +42,10 @@ class ShoppingListFragment : Fragment() {
     }
 
     private fun setUpShoppingListItemRecycleAdapter() {
-        shoppingListAdapter = ShoppingListItemRecycleAdapter()
+        val shoppingListAdapter = ShoppingListItemRecycleAdapter()
 
         binding.shoppingList.apply {
-            layoutManager = LinearLayoutManager(this.context)
+            layoutManager = LinearLayoutManager(context)
             adapter = shoppingListAdapter
         }
 
