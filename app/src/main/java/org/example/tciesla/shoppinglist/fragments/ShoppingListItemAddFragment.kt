@@ -7,18 +7,19 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import org.example.tciesla.shoppinglist.R
 import org.example.tciesla.shoppinglist.databinding.FragmentShoppingListItemAddBinding
-import org.example.tciesla.shoppinglist.models.ShoppingListItem
-import org.example.tciesla.shoppinglist.state.DEFAULT_SHOPPING_LIST_NAME
-import org.example.tciesla.shoppinglist.state.ShoppingListState
+import org.example.tciesla.shoppinglist.repositories.DEFAULT_SHOPPING_LIST_NAME
+import org.example.tciesla.shoppinglist.uistates.ShoppingListItemUiState
+import org.example.tciesla.shoppinglist.viewmodels.ShoppingListViewModel
 
 class ShoppingListItemAddFragment : Fragment() {
 
     private var _binding: FragmentShoppingListItemAddBinding? = null
-
     private val binding get() = _binding!!
+    private val shoppingListViewModel: ShoppingListViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,7 +34,7 @@ class ShoppingListItemAddFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.buttonAdd.setOnClickListener {
-            ShoppingListState.onShoppingListItemAdded(newShoppingListItem(view))
+            shoppingListViewModel.onShoppingListItemAdded(newShoppingListItem(view))
             navigateToShoppingListFragment()
         }
 
@@ -61,8 +62,8 @@ class ShoppingListItemAddFragment : Fragment() {
         findNavController().navigate(R.id.action_ShoppingListItemAddFragment_to_ShoppingListFragment)
     }
 
-    private fun newShoppingListItem(view: View): ShoppingListItem {
-        return ShoppingListItem(
+    private fun newShoppingListItem(view: View): ShoppingListItemUiState {
+        return ShoppingListItemUiState(
             title = view.findEditTextString(R.id.item_title, "item"),
             list = view.findEditTextString(R.id.item_list, DEFAULT_SHOPPING_LIST_NAME),
             bought = false

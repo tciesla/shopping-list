@@ -9,10 +9,6 @@ data class ShoppingListItem(
     var bought: Boolean
 ) {
 
-    fun bought() {
-        bought = !bought
-    }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

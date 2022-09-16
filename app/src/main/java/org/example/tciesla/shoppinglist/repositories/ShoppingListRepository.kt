@@ -7,17 +7,15 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.example.tciesla.shoppinglist.models.ShoppingListItem
 
+const val DEFAULT_SHOPPING_LIST_NAME = "default"
+const val SHARED_PREFERENCES_KEY = "list"
+const val EMPTY_LIST = "[]"
 
-class ShoppingListItems(context: Context) {
+object ShoppingListRepository {
 
-    companion object {
-        const val SHARED_PREFERENCES_KEY = "list"
-        const val EMPTY_LIST = "[]"
-    }
+    private lateinit var preferences: SharedPreferences
 
-    private val preferences: SharedPreferences
-
-    init {
+    fun initialize(context: Context) {
         preferences = context.getSharedPreferences("${this::class.qualifiedName}", Context.MODE_PRIVATE)
     }
 

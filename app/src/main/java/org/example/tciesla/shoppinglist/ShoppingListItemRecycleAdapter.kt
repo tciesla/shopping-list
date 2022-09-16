@@ -8,22 +8,22 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import org.example.tciesla.shoppinglist.models.ShoppingListItem
-import org.example.tciesla.shoppinglist.state.ShoppingListState
+import org.example.tciesla.shoppinglist.uistates.ShoppingListItemUiState
+import org.example.tciesla.shoppinglist.viewmodels.ShoppingListViewModel
 
-class ShoppingListItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    fun bind(shoppingListItem: ShoppingListItem) {
+class ShoppingListItemViewHolder(private val shoppingListViewModel: ShoppingListViewModel, itemView: View) : RecyclerView.ViewHolder(itemView) {
+    fun bind(shoppingListItem: ShoppingListItemUiState) {
         val itemTitleView = itemView.findViewById<TextView>(R.id.item_title)
 
         itemTitleView.text = shoppingListItem.title
         setPaintFlags(itemTitleView, shoppingListItem.bought)
 
         itemView.setOnClickListener {
-            ShoppingListState.onShoppingListItemBought(shoppingListItem)
+            shoppingListViewModel.onShoppingListItemBought(shoppingListItem)
             setPaintFlags(itemTitleView, shoppingListItem.bought)
         }
         itemView.setOnLongClickListener {
-            ShoppingListState.onShoppingListItemRemoved(shoppingListItem)
+            shoppingListViewModel.onShoppingListItemRemoved(shoppingListItem)
             return@setOnLongClickListener true
         }
     }
@@ -37,12 +37,12 @@ class ShoppingListItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemV
     }
 }
 
-class ShoppingListItemRecycleAdapter : ListAdapter<ShoppingListItem, ShoppingListItemViewHolder>(ShoppingListItemDiffCallback()) {
+class ShoppingListItemRecycleAdapter(private val shoppingListViewModel: ShoppingListViewModel) : ListAdapter<ShoppingListItemUiState, ShoppingListItemViewHolder>(ShoppingListItemDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShoppingListItemViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val itemView = inflater.inflate(R.layout.shopping_list_item_row, parent, false)
-        return ShoppingListItemViewHolder(itemView)
+        return ShoppingListItemViewHolder(shoppingListViewModel, itemView)
     }
 
     override fun onBindViewHolder(holder: ShoppingListItemViewHolder, position: Int) {
@@ -50,11 +50,11 @@ class ShoppingListItemRecycleAdapter : ListAdapter<ShoppingListItem, ShoppingLis
         holder.bind(shoppingListItem)
     }
 
-    class ShoppingListItemDiffCallback : DiffUtil.ItemCallback<ShoppingListItem>() {
-        override fun areItemsTheSame(oldItem: ShoppingListItem, newItem: ShoppingListItem) =
+    class ShoppingListItemDiffCallback : DiffUtil.ItemCallback<ShoppingListItemUiState>() {
+        override fun areItemsTheSame(oldItem: ShoppingListItemUiState, newItem: ShoppingListItemUiState) =
             oldItem == newItem
 
-        override fun areContentsTheSame(oldItem: ShoppingListItem, newItem: ShoppingListItem) =
+        override fun areContentsTheSame(oldItem: ShoppingListItemUiState, newItem: ShoppingListItemUiState) =
             oldItem == newItem
     }
 }
